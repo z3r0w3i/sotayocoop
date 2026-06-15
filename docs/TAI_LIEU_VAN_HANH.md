@@ -1,4 +1,4 @@
-# HƯỚNG DẪN VẬN HÀNH & SỬ DỤNG HỆ THỐNG "SỔ TAY SỐ NÔNG DÂN GIA LAI"
+# HƯỚNG DẪN VẬN HÀNH & SỬ DỤNG HỆ THỐNG "SỔ TAY SỐ NÔNG DÂN"
 
 Tài liệu này hướng dẫn chi tiết các tác vụ nghiệp vụ hàng ngày cho ba nhóm đối tượng sử dụng chính: **Hộ nông dân**, **Quản trị viên Hợp tác xã (HTX)**, và **Lãnh đạo xã/phường**.
 
