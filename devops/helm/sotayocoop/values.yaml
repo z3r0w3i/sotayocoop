@@ -1,0 +1,46 @@
+global:
+  environment: production
+
+replicaCount: 2
+
+image:
+  repository: registry.gitlab.com/gialai-agri/sotayocoop
+  pullPolicy: Always
+
+backend:
+  name: backend
+  port: 3000
+  replicaCount: 2
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+
+frontend:
+  name: dashboard
+  port: 80
+  replicaCount: 2
+  resources:
+    limits:
+      cpu: 250m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+postgresql:
+  host: postgres-service
+  port: 5432
+  database: sotayocoop
+  username: postgres
+  password: postgres_secure_password
+  storage: 10Gi
+
+ingress:
+  enabled: true
+  className: nginx
+  host: sotayoso.gialai.gov.vn
+  tls: []

@@ -1,0 +1,6 @@
+apiVersion: v2
+name: sotayocoop
+description: A Helm chart for deploying Sổ Tay Số Nông Dân Gia Lai application stack on Kubernetes
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

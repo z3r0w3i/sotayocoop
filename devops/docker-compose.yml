@@ -1,0 +1,107 @@
+version: '3.8'
+
+services:
+  # 1. Cơ sở dữ liệu PostgreSQL + PostGIS
+  db:
+    image: postgis/postgis:15-3.3
+    container_name: sotayocoop-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_password
+      POSTGRES_DB: sotayocoop
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ../database/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
+      - ../database/seed.sql:/docker-entrypoint-initdb.d/2-seed.sql
+    networks:
+      - sotayocoop-network
+
+  # 2. Keycloak Authentication & IAM
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    container_name: sotayocoop-keycloak
+    command: start-dev
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin_password
+      KC_HOSTNAME_STRICT: "false"
+    ports:
+      - "8080:8080"
+    networks:
+      - sotayocoop-network
+
+  # 3. MinIO Object Storage
+  minio:
+    image: minio/minio:RELEASE.2024-05-10T01-39-38Z
+    container_name: sotayocoop-storage
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin_password
+    volumes:
+      - miniodata:/data
+    networks:
+      - sotayocoop-network
+
+  # 4. Ollama (AI cục bộ hỗ trợ Qwen)
+  ollama:
+    image: ollama/ollama:latest
+    container_name: sotayocoop-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama:/root/.ollama
+    networks:
+      - sotayocoop-network
+
+  # 5. NestJS Backend API
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: sotayocoop-backend
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres_password
+      DB_NAME: sotayocoop
+      OLLAMA_URL: http://ollama:11434
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+    depends_on:
+      - db
+      - keycloak
+      - minio
+    networks:
+      - sotayocoop-network
+
+  # 6. Next.js Web Dashboard
+  dashboard:
+    build:
+      context: ../web-dashboard
+      dockerfile: Dockerfile
+    container_name: sotayocoop-dashboard
+    ports:
+      - "80:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://backend:3000/api
+    depends_on:
+      - backend
+    networks:
+      - sotayocoop-network
+
+volumes:
+  pgdata:
+  miniodata:
+  ollama:
+
+networks:
+  sotayocoop-network:
+    driver: bridge

@@ -1,0 +1,38 @@
+name: sotayocoop_mobile
+description: Mobile Application for Gia Lai Farmer Digital Notebook.
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State Management
+  provider: ^6.1.2
+
+  # Networking & Auth
+  http: ^1.2.1
+  jwt_decoder: ^2.0.1
+
+  # Local DB for Offline Sync
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+
+  # Hardware integrations
+  geolocator: ^11.0.0
+  image_picker: ^1.1.1
+  qr_code_scanner: ^1.0.1
+  path_provider: ^2.1.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  hive_generator: ^2.0.1
+  build_runner: ^2.4.9
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
